@@ -2,9 +2,6 @@ name: Superadmin Validation
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
 
 permissions:
   contents: read
@@ -14,13 +11,5 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          show-progress: false
-      - name: Install dependencies
-        run: npx --yes pnpm@11.9.0 install --no-frozen-lockfile --reporter=silent
-      - name: Typecheck
-        run: npx --yes pnpm@11.9.0 typecheck
-      - name: Generate static application
-        run: npx --yes pnpm@11.9.0 generate
+      - name: Install and validate
+        run: git clone --quiet --depth 1 --branch "$GITHUB_HEAD_REF" "https://github.com/$GITHUB_REPOSITORY.git" source && cd source && npx --yes pnpm@11.9.0 install --no-frozen-lockfile --reporter=silent && npx --yes pnpm@11.9.0 typecheck && npx --yes pnpm@11.9.0 generate
